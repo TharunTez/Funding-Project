@@ -1,0 +1,74 @@
+.app {
+  margin: auto;
+  font-family: "IBM Plex Sans Condensed";
+  font-size: 16px;
+}
+.background {
+  background: #fafbff;
+  padding: 20px;
+  height: 300px;
+  width: 280px;
+}
+.arrowbox {
+  color: #5f5fdc;
+  background-color: #e3ebfc;
+  position: relative;
+  line-height: 30px;
+  padding-left: 10px;
+  border-radius: 5px;
+  border: solid 1px #e3ebfc;
+  &:after {
+    left: 85%;
+    top: 170%;
+    transform: rotate(90deg);
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-left-color: #e3ebfc;
+    border-width: 12px;
+    margin-top: -25px;
+  }
+}
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 10px;
+  margin-top: -9px;
+  &:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+}
+.heading {
+  font-family: "Poppins";
+  font-size: 22px;
+  font-weight: bold;
+}
+input {
+  height: 30px;
+  padding: 0 11px;
+  text-align: left;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border: solid 1px grey;
+  outline: 0;
+  &:first-letter {
+    color: #f00;
+  }
+}
+button {
+  height: 32px;
+  margin-left: -5px;
+  background-color: #19cca3;
+  outline: 0;
+  border: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  &:hover {
+    cursor: pointer;
+  }
+}
