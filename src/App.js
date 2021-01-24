@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import ProgressBar from "./Progress.js";
 import "./style.scss";
 
 const target = 5000;
-let donorMessage = "Be the first donor for this project!";
-let heading = `${Intl.NumberFormat("en-IN").format(
+let amountMessage = `${Intl.NumberFormat("en-US").format(
   5000
 )} still needed to fund this project`;
-let daysLeft = "Only four days left to fund this project";
+let heading = "Only four days left to fund this project";
 
 export default function App() {
   const [amount, setAmount] = useState(0);
@@ -15,6 +14,30 @@ export default function App() {
   const [donors, setDonors] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
   const [disabled, setDisabled] = useState(false);
+
+  const DonorMessage = useCallback(() => {
+    if (total >= target) return null;
+    if (donors === 0) {
+      return (
+        <p className="donor-message">
+          Be the <b>first</b> donor for this project!
+        </p>
+      );
+    }
+    if (donors === 1) {
+      return (
+        <p className="donor-message">
+          Join the <b>first</b> donor who has already supported this project!
+        </p>
+      );
+    }
+    return (
+      <p className="donor-message">
+        Join the <b>{donors}</b> other donors who have already supported this
+        project
+      </p>
+    );
+  }, [donors, total]);
 
   const addAmountHandler = () => {
     const amt = parseInt(amount, 10);
@@ -28,18 +51,13 @@ export default function App() {
     }
     let d = donors + 1;
     let t = total + amt;
-
-    donorMessage =
-      d === 1
-        ? "Join the first donor who has already supported this project!"
-        : `Join the ${d} other donors who have already supported this project`;
-
     if (t >= target) {
-      daysLeft = "Thanks so much! We have raised $5,000 for this project!!";
-      heading = "";
-      donorMessage = "";
+      heading = `Thanks so much! We have raised $${Intl.NumberFormat(
+        "en-US"
+      ).format(t)} for this project!!`;
+      amountMessage = "";
     } else {
-      heading = `${Intl.NumberFormat("en-IN").format(
+      amountMessage = `${Intl.NumberFormat("en-US").format(
         target - t
       )} still needed to fund this project`;
     }
@@ -55,42 +73,49 @@ export default function App() {
     }
   }, [total]);
 
-  const completed = useMemo(() => (total / target) * 100, [total]);
+  let completed = useMemo(() => (total / target) * 100, [total]);
+  if (completed > 100) completed = 100;
 
-  const [firstHeader, lastHeader] = useMemo(() => heading.split("still"), [
-    heading
-  ]);
+  const [amountValue, amountString] = useMemo(
+    () => amountMessage.split("still"),
+    [amountMessage]
+  );
 
   return (
     <div className="background" role="main">
       <div className="app">
-        {heading && (
+        {amountMessage && (
           <p className="arrowbox">
             <sup>$</sup>
-            <b>{firstHeader}</b>
-            {lastHeader}
+            <b>{amountValue}</b>
+            {amountString}
           </p>
         )}
         <ProgressBar completed={completed} />
         <div className="card">
           <div>
-            <p className="heading">{daysLeft}</p>
-            {donorMessage && <p>{donorMessage}</p>}
+            <p className="heading">{heading}</p>
+            <DonorMessage />
             {errorMessage && <p>{errorMessage}</p>}
-            <input
-              type="text"
-              value={`$ ${amount}`}
-              disabled={disabled}
-              aria-label="Enter amount to donate"
-              onChange={event => setAmount(event.target.value.slice(2))}
-            />
-            <button
-              disabled={disabled}
-              onClick={addAmountHandler}
-              aria-label="Give Now"
-            >
-              Give Now
-            </button>
+            <span className="textbox">
+              <span className="prefix">$</span>
+              <input
+                type="text"
+                value={!amount ? "" : amount}
+                aria-label="Enter amount to donate"
+                autoFocus={true}
+                onBlur={({ target }) => target.focus()}
+                disabled={disabled}
+                onChange={event => setAmount(event.target.value)}
+              />
+              <button
+                disabled={disabled}
+                onClick={addAmountHandler}
+                aria-label="Give Now"
+              >
+                Give Now
+              </button>
+            </span>
           </div>
         </div>
       </div>
